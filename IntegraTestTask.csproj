@@ -6,9 +6,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
-  <ItemGroup>
+	<ItemGroup>
 	<PackageReference Include="FluentValidation" Version="11.9.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="6.0.29" />
+    <PackageReference Include="NSwag.AspNetCore" Version="14.0.7" />
   </ItemGroup>
 
 </Project>
