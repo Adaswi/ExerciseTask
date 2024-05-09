@@ -1,13 +1,19 @@
 using FluentValidation;
 using IntegraTestTask;
+using IntegraTestTask.Converters;
 using IntegraTestTask.Entities;
 using IntegraTestTask.PeopleEndpoints;
 using IntegraTestTask.Validators;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<TestDatabaseContext>(options =>
 options.UseInMemoryDatabase(builder.Configuration.GetConnectionString("TestDatabase")));
+builder.Services.Configure<JsonSerializerOptions>(options =>
+{
+    options.Converters.Add(new DateOnlyConverter());
+});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApiDocument(config =>
 {
