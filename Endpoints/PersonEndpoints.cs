@@ -1,5 +1,7 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
+using IntegraTestTask.Converters;
+using IntegraTestTask.DTOs;
 using IntegraTestTask.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,8 +21,10 @@ namespace IntegraTestTask.PeopleEndpoints
                         ? Results.Ok(person)
                         : Results.NotFound());
 
-            app.MapPost("/people", async (IValidator <Person> validator, Person person, TestDatabaseContext dbContext) =>
+            app.MapPost("/people", async (IValidator <Person> validator, PersonDTO personDTO, TestDatabaseContext dbContext) =>
             {
+                var person = PersonConverter.Convert(personDTO);
+
                 ValidationResult validationResult = await validator.ValidateAsync(person);
                 if(!validationResult.IsValid)
                 {
