@@ -1,10 +1,11 @@
-﻿using IntegraTestTask.Entities;
+﻿using FluentValidation;
+using FluentValidation.Results;
+using IntegraTestTask.Entities;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Cryptography.X509Certificates;
 
 namespace IntegraTestTask.PeopleEndpoints
 {
-    public static class PeopleEndpoints
+    public static class PersonEndpoints
     {
         public static void AddPeopleEndpoints(this IEndpointRouteBuilder app)
         {
@@ -18,8 +19,13 @@ namespace IntegraTestTask.PeopleEndpoints
                         ? Results.Ok(person)
                         : Results.NotFound());
 
-            app.MapPost("/people", async (Person person, TestDatabaseContext dbContext) =>
+            app.MapPost("/people", async (IValidator <Person> validator, Person person, TestDatabaseContext dbContext) =>
             {
+                ValidationResult validationResult = await validator.ValidateAsync(person);
+                if(!validationResult.IsValid)
+                {
+                    return Results.ValidationProblem(validationResult.ToDictionary());
+                }
                 dbContext.People.Add(person);
                 await dbContext.SaveChangesAsync();
 
