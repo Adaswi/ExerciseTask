@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using IntegraTestTask.Entities;
+using System.Text.RegularExpressions;
 
 namespace IntegraTestTask.Validators
 {
@@ -13,12 +14,12 @@ namespace IntegraTestTask.Validators
             RuleFor(x => x.FirstName).NotEmpty().MaximumLength(255);
             RuleFor(x => x.LastName).NotEmpty().MaximumLength(255);
             RuleFor(x => x.Birthdate).Must(birthdate => !birthdate.Equals(default(DateOnly))).WithMessage("Data musi być w formacie YYYY-MM-DD").Must(birthdate => IsBirthdateValid(birthdate)).WithMessage($"Data urodzenia nie może być przed {tooLongAgo} lub po {today}");
-            RuleFor(x => x.Address).NotEmpty().EmailAddress();
-        }
+                RuleFor(x => x.Address).NotEmpty().MaximumLength(255).Must(address => Regex.IsMatch(address, "[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ]+,\\s[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ\\s]+,\\s[A-Za-z0-9żźćńółęąśŻŹĆĄŚĘŁÓŃ/\\s]+")).WithMessage("Adres musi być w formacie WOJEWÓDZTWO, MIASTO, ULICA NR");
+            }
 
-        public static bool IsBirthdateValid(DateOnly birthdate)
+        public bool IsBirthdateValid(DateOnly birthdate)
         {
-            return (birthdate <= DateOnly.FromDateTime(DateTime.UtcNow) && birthdate > DateOnly.FromDateTime(DateTime.UtcNow.AddYears(-150)));
+            return birthdate <= today && birthdate > tooLongAgo;
         }
     }
 }
